@@ -1,0 +1,245 @@
+<Widget frameRate="60" useVariableUpdater="DateTime.Hour,DateTime.Minute" scaleByDensity="false" screenWidth="1080" version="2" transparentSurface="true">
+  <Var name="q200Width" type="number" expression="904"/>
+  <Var name="q200Height" type="number" expression="572"/>
+  <Var name="q200ScreenRatio" type="number" expression="(#q200Width / #q200Height)"/>
+  <Var name="p2Width" type="number" expression="976"/>
+  <Var name="p2Height" type="number" expression="596"/>
+  <Var name="p2ScreenRatio" type="number" expression="(#p2Width / #p2Height)"/>
+  <Var name="realScreenRatio" type="number" expression="(#view_width / #view_height)"/>
+  <Var name="diffWithQ200" type="number" expression="abs((#realScreenRatio - #q200ScreenRatio))"/>
+  <Var name="diffWithP2" type="number" expression="abs((#realScreenRatio - #p2ScreenRatio))"/>
+  <Var name="isQ200" type="number" expression="(#diffWithQ200 { #diffWithP2)"/>
+  <Var name="scale" type="number" expression="ifelse(#isQ200,(#view_width / 336),((#view_width / 364) * 1.047))"/>
+  <Var name="font_path_style_system" type="string" expression="'/system/fonts/MiSansVF.ttf'"/>
+
+  <Var name="is_aod" type="number" expression="0" const="true"/>
+
+  <Var name="data" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="param_v2" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="package_name" type="string" expression="''" const="true"/>
+  <Var name="line1_text" type="string" expression="''" const="true"/>
+  <Var name="line2_text" type="string" expression="''" const="true"/>
+  <Var name="line3_text" type="string" expression="''" const="true"/>
+  <Var name="highlightInfoV3" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="bigIslandArea" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="imageTextInfoLeft" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="imageTextInfoLeftTextInfo" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="outerTextInfo" type="jsonO" expression="newJsonObject()" const="true"/>
+  <Var name="enterprise_name" type="string" expression="'default_food'" const="true"/>
+  <Var name="raw_brand" type="string" expression="''" const="true"/>
+  <Var name="store_location" type="string" expression="''" const="true"/>
+  <Var name="order_price" type="string" expression="''" const="true"/>
+  <Var name="order_count" type="string" expression="''" const="true"/>
+  <Var name="main_image_url" type="string" expression="''" const="true"/>
+  <Var name="actionInfo" type="jsonO" expression="newJsonObject()" const="true"/>
+
+  <Function name="recognize_brand">
+    <!-- 根据品牌名称设置对应的logo -->
+    <VariableCommand name="enterprise_name" expression="'default_food'" type="string"/>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '古茗') } -1)">
+      <VariableCommand name="enterprise_name" expression="'guming'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '瑞幸') } -1)">
+      <VariableCommand name="enterprise_name" expression="'luckin'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '喜茶') } -1)">
+      <VariableCommand name="enterprise_name" expression="'heytea'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '爷爷不泡茶') } -1)">
+      <VariableCommand name="enterprise_name" expression="'yeye'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '一点点') } -1)">
+      <VariableCommand name="enterprise_name" expression="'yidiandian'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="((strIndexOf(@raw_brand, 'CoCo') } -1) || (strIndexOf(@raw_brand, 'coco') } -1))">
+      <VariableCommand name="enterprise_name" expression="'coco'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '霸王茶姬') } -1)">
+      <VariableCommand name="enterprise_name" expression="'chagee'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '茶百道') } -1)">
+      <VariableCommand name="enterprise_name" expression="'chabaidao'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '沪上阿姨') } -1)">
+      <VariableCommand name="enterprise_name" expression="'hushang'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '蜜雪冰城') } -1)">
+      <VariableCommand name="enterprise_name" expression="'mixue'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '塔斯汀') } -1)">
+      <VariableCommand name="enterprise_name" expression="'tastien'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '库迪') } -1)">
+      <VariableCommand name="enterprise_name" expression="'cotti'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '肯德基') } -1)">
+      <VariableCommand name="enterprise_name" expression="'kfc'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '麦当劳') } -1)">
+      <VariableCommand name="enterprise_name" expression="'mcdonalds'" type="string"/>
+    </MultiCommand>
+
+    <MultiCommand condition="(strIndexOf(@raw_brand, '汉堡王') } -1)">
+      <VariableCommand name="enterprise_name" expression="'burgerking'" type="string"/>
+    </MultiCommand>
+  </Function>
+
+  <Function name="initData">
+    <VariableCommand name="package_name" expression="@miui.rare.param.package_name" type="string"/>
+    <VariableCommand name="raw_str" expression="@miui.focus.param" type="string"/>
+    <VariableCommand name="clean_str" expression="strReplaceAll(strReplaceAll(strReplaceAll(@raw_str, '\n', ''), '\r', ''), '\', '')" type="string"/>
+    <VariableCommand name="data" expression="strToJson(@clean_str)" type="jsonO"/>
+    <VariableCommand name="param_v2" expression="jsonGetObject($data, 'param_v2')" type="jsonO"/>
+
+    <IfCommand ifCondition="eqs(@package_name, 'com.stardawntech.starisland')">
+      <Consequent>
+        <!-- 提取param_island -->
+        <VariableCommand name="param_island" expression="jsonGetObject($param_v2, 'param_island')" type="jsonO"/>
+        <VariableCommand name="bigIslandArea" expression="jsonGetObject($param_island, 'bigIslandArea')" type="jsonO"/>
+        <VariableCommand name="imageTextInfoLeft" expression="jsonGetObject($bigIslandArea, 'imageTextInfoLeft')" type="jsonO"/>
+        <VariableCommand name="imageTextInfoLeftTextInfo" expression="jsonGetObject($imageTextInfoLeft, 'textInfo')" type="jsonO"/>
+
+        <!-- 提取品牌名称 (raw_brand) -->
+        <VariableCommand name="raw_brand" expression="jsonGetString($imageTextInfoLeftTextInfo, 'title')" type="string"/>
+
+        <!-- 提取店名并组合第一行 -->
+        <VariableCommand name="store_location" expression="jsonGetString($imageTextInfoLeftTextInfo, 'content')" type="string"/>
+        <IfCommand ifCondition="(len(@store_location) } 0)">
+          <Consequent>
+            <VariableCommand name="line1_text" expression="((@store_location + ' · ') + @raw_brand)" type="string"/>
+          </Consequent>
+          <Alternate>
+            <VariableCommand name="line1_text" expression="@raw_brand" type="string"/>
+          </Alternate>
+        </IfCommand>
+
+        <!-- 识别品牌并获取对应logo -->
+        <FunctionCommand target="recognize_brand"/>
+
+        <!-- 提取取餐码 (line2_text): 从外层textInfo获取 -->
+        <VariableCommand name="outerTextInfo" expression="jsonGetObject($bigIslandArea, 'textInfo')" type="jsonO"/>
+        <VariableCommand name="line2_text" expression="jsonGetString($outerTextInfo, 'title')" type="string"/>
+
+        <!-- 提取订单信息 (line3_text): 获取价格和数量 -->
+        <VariableCommand name="highlightInfoV3" expression="jsonGetObject($param_v2, 'highlightInfoV3')" type="jsonO"/>
+        <VariableCommand name="order_price" expression="jsonGetString($highlightInfoV3, 'primaryText')" type="string"/>
+        <VariableCommand name="order_count" expression="jsonGetString($highlightInfoV3, 'highLightText')" type="string"/>
+        <VariableCommand name="line3_text" expression="((@order_price + ' ') + @order_count)" type="string"/>
+
+      </Consequent>
+      <Alternate>
+        <VariableCommand name="line1_text" expression="jsonGetString($data, 'content')" type="string"/>
+        <VariableCommand name="line2_text" expression="jsonGetString($data, 'title')" type="string"/>
+      </Alternate>
+    </IfCommand>
+
+    <!-- 清理富文本标签 -->
+    <VariableCommand name="line1_text" expression="strReplaceAll(@line1_text,'&lt;font[^>]*>|&lt;/font>','')" type="string"/>
+    <VariableCommand name="line2_text" expression="strReplaceAll(@line2_text,'&lt;font[^>]*>|&lt;/font>','')" type="string"/>
+    <VariableCommand name="line3_text" expression="strReplaceAll(@line3_text,'&lt;font[^>]*>|&lt;/font>','')" type="string"/>
+    <VariableCommand name="store_location" expression="strReplaceAll(@store_location,'&lt;font[^>]*>|&lt;/font>|\\s+','')" type="string"/>
+
+    <!-- 设置logo图片路径 -->
+    <VariableCommand name="main_image_url" expression="(('assets/starisland/' + @enterprise_name) + '.png')" type="string"/>
+  </Function>
+
+  <Rectangle w="#view_width" h="#view_height" cornerRadius="0" alpha="255" fillColor="#000000"/>
+
+  <Image name="bg_aod" w="#view_width" h="#view_height" srcExp="'assets/bg_aod.png'" folmeMode="true" alpha="0"/>
+  <Image name="bg" w="#view_width" h="#view_height" srcExp="'assets/bg.png'" folmeMode="true" alpha="255"/>
+
+  <Image name="main_image" x="(123 * #scale)" y="(28 * #scale)" w="(74 * #scale)" h="(74 * #scale)" srcExp="@main_image_url" folmeMode="true" alpha="ifelse(#is_aod, 180, 255)"/>
+
+  <Group name="t1" x="(103 * #scale)" y="(90 * #scale)" folmeMode="true" alpha="255">
+    <!-- 第一行: 店名和品牌 -->
+    <Text name="line1_t1" x="(20 * #scale)" y="(15 * #scale)" width="(193 * #scale)" align="left" size="(12 * #scale)" fontPath="@font_path_style_system" textExp="@line1_text" color="#000000" alpha="255*0.6" fontPathWeight="380" ellipsis="true"/>
+    <!-- 第二行: 取餐码  -->
+    <Text name="line2_t1" x="(20 * #scale)" y="(30 * #scale)" width="(193 * #scale)" align="left" size="(36 * #scale)" fontPath="@font_path_style_system" textExp="@line2_text" color="#000000" fontPathWeight="450" multiLine="true" lineClamp="1" ellipsis="true"/>
+    <!-- 第三行: 价格数量 -->
+    <Text name="line3_t1" x="(20 * #scale)" y="(80 * #scale)" width="(193 * #scale)" align="left" size="(14 * #scale)" fontPath="@font_path_style_system" textExp="@line3_text" color="#FF6B6B" fontPathWeight="500" ellipsis="true"/>
+  </Group>
+
+  <Group name="t2" x="(103 * #scale)" y="(90 * #scale)" folmeMode="true" alpha="0">
+    <!-- 第一行: 黑屏模式下店名和品牌 -->
+    <Text x="(20 * #scale)" y="(15 * #scale)" width="(193 * #scale)" align="left" size="(12 * #scale)" fontPath="@font_path_style_system" textExp="@line1_text" color="#FFFFFF" alpha="255*0.6" fontPathWeight="380" ellipsis="true"/>
+    <!-- 第二行: 黑屏模式下取餐码 -->
+    <Text x="(20 * #scale)" y="(30 * #scale)" width="(193 * #scale)" align="left" size="(36 * #scale)" fontPath="@font_path_style_system" textExp="@line2_text" color="#FFFFFF" alpha="200" fontPathWeight="450" multiLine="true" lineClamp="1" ellipsis="true"/>
+    <!-- 第三行: 黑屏模式下订单价格和数量 -->
+    <Text x="(20 * #scale)" y="(80 * #scale)" width="(193 * #scale)" align="left" size="(14 * #scale)" fontPath="@font_path_style_system" textExp="@line3_text" color="#FFB8B8" alpha="220" fontPathWeight="500" ellipsis="true"/>
+  </Group>
+
+  <Group>
+    <FolmeState name="folme_state_0" alpha="0"/>
+    <FolmeConfig name="folme_config_0" ease="-2, 1,0.5"/>
+    <FolmeState name="folme_state_1" alpha="0"/>
+    <FolmeConfig name="folme_config_1" ease="-2, 1,0.5"/>
+
+    <FolmeState name="folme_state_2" alpha="255"/>
+    <FolmeConfig name="folme_config_2" ease="-2, 1,0.72"/>
+    <FolmeState name="folme_state_3" alpha="255"/>
+    <FolmeConfig name="folme_config_3" ease="-2, 1,0.72" onComplete="'folme_oncomplete_4'"/>
+
+    <Function name="folme_oncomplete_4">
+      <FrameRateCommand rate="0"/>
+    </Function>
+
+    <FolmeState name="folme_state_4" alpha="255"/>
+    <FolmeConfig name="folme_config_4" ease="-2, 1,0.72"/>
+    <FolmeState name="folme_state_5" alpha="255"/>
+    <FolmeConfig name="folme_config_5" ease="-2, 1,0.72"/>
+    <FolmeState name="folme_state_6" alpha="0"/>
+    <FolmeConfig name="folme_config_6" ease="-2, 1,0.5"/>
+    <FolmeState name="folme_state_7" alpha="0"/>
+    <FolmeConfig name="folme_config_7" ease="-2, 1,0.5"/>
+  </Group>
+
+  <ExternalCommands>
+    <Trigger action="enterAod">
+      <VariableCommand name="is_aod" expression="1" type="number"/>
+      <FolmeCommand target="bg" states="'folme_state_0'" config="'folme_config_0'" command="to"/>
+      <FolmeCommand target="t1" states="'folme_state_1'" config="'folme_config_1'" command="to"/>
+      <FolmeCommand target="t2" states="'folme_state_2'" config="'folme_config_2'" command="to"/>
+      <FolmeCommand target="bg_aod" states="'folme_state_3'" config="'folme_config_3'" command="to"/>
+    </Trigger>
+
+    <Trigger action="exitAod">
+      <VariableCommand name="is_aod" expression="0" type="number"/>
+      <FrameRateCommand rate="120"/>
+      <FolmeCommand target="bg" states="'folme_state_4'" config="'folme_config_4'" command="to"/>
+      <FolmeCommand target="t1" states="'folme_state_5'" config="'folme_config_5'" command="to"/>
+      <FolmeCommand target="t2" states="'folme_state_6'" config="'folme_config_6'" command="to"/>
+      <FolmeCommand target="bg_aod" states="'folme_state_7'" config="'folme_config_7'" command="to"/>
+    </Trigger>
+
+    <Trigger action="init">
+      <FrameRateCommand rate="120"/>
+      <FunctionCommand target="initData"/>
+    </Trigger>
+    <Trigger action="notification_received">
+      <FunctionCommand target="initData"/>
+    </Trigger>
+    <Trigger action="pause">
+      <FrameRateCommand rate="0"/>
+    </Trigger>
+    <Trigger action="resume">
+      <MultiCommand condition="(! #is_aod)">
+        <FrameRateCommand rate="120"/>
+      </MultiCommand>
+    </Trigger>
+  </ExternalCommands>
+</Widget>
+
