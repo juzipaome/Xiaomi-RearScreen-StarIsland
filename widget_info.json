@@ -1,0 +1,8 @@
+{
+  "type": "widget",
+  "name": "取餐码[适配StarIsland]",
+  "business_setup": {
+    "id": "pickup_flow",
+    "renameable": false
+  }
+}
