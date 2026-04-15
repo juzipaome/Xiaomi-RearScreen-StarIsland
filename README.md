@@ -1,0 +1,2 @@
+# Xiaomi-RearScreen-StarIsland
+将StarIsland的超级岛同时转化到小米背屏的小组件
